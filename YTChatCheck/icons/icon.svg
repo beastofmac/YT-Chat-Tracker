@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#1a73e8"/>
+
+  <!-- Chat bubble shape -->
+  <path d="M32 48
+           C32 38.7 39.7 31 50 31
+           L78 31
+           C88.3 31 96 38.7 96 48
+           L96 84
+           C96 93.3 88.3 101 78 101
+           L58 101
+           L44 115
+           L32 101
+           L32 48 Z"
+        fill="white"/>
+
+  <!-- Checkmark -->
+  <path d="M42 62 L54 74 L78 50"
+        fill="none"
+        stroke="#1a73e8"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,339 @@
+/**
+ * Styles for YouTube Live Chat Read Tracker
+ * Minimal, native-looking checkbox integration
+ */
+
+/* ==========================================================================
+   Checkbox Container
+   ========================================================================== */
+
+.yt-chat-read-checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  margin-left: 4px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  vertical-align: middle;
+}
+
+.yt-chat-read-checkbox-container:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.yt-chat-read-checkbox-container:focus-within {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .yt-chat-read-checkbox-container:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* YouTube's dark theme */
+ytd-app[dark] .yt-chat-read-checkbox-container:hover,
+html[dark] .yt-chat-read-checkbox-container:hover,
+[dark] .yt-chat-read-checkbox-container:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   Checkbox Input (Hidden, using custom styled span)
+   ========================================================================== */
+
+.yt-chat-read-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+/* ==========================================================================
+   Custom Checkbox Visual
+   ========================================================================== */
+
+.yt-chat-read-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #5f6368;
+  border-radius: 3px;
+  background-color: transparent;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+/* Checkbox hover state */
+.yt-chat-read-checkbox-container:hover .yt-chat-read-checkbox {
+  border-color: #1a73e8;
+}
+
+/* Checked state */
+.yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox {
+  background-color: #1a73e8;
+  border-color: #1a73e8;
+}
+
+.yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -2px);
+  pointer-events: none;
+}
+
+/* Focus state for accessibility */
+.yt-chat-read-checkbox-input:focus + .yt-chat-read-checkbox {
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.4);
+}
+
+/* Dark mode checkbox */
+@media (prefers-color-scheme: dark) {
+  .yt-chat-read-checkbox {
+    border-color: #9aa0a6;
+  }
+
+  .yt-chat-read-checkbox-container:hover .yt-chat-read-checkbox {
+    border-color: #8ab4f8;
+  }
+
+  .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox {
+    background-color: #8ab4f8;
+    border-color: #8ab4f8;
+  }
+
+  .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after {
+    border-color: #202124;
+  }
+
+  .yt-chat-read-checkbox-input:focus + .yt-chat-read-checkbox {
+    box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.4);
+  }
+}
+
+/* YouTube's dark theme */
+ytd-app[dark] .yt-chat-read-checkbox,
+html[dark] .yt-chat-read-checkbox,
+[dark] .yt-chat-read-checkbox {
+  border-color: #9aa0a6;
+}
+
+ytd-app[dark] .yt-chat-read-checkbox-container:hover .yt-chat-read-checkbox,
+html[dark] .yt-chat-read-checkbox-container:hover .yt-chat-read-checkbox,
+[dark] .yt-chat-read-checkbox-container:hover .yt-chat-read-checkbox {
+  border-color: #8ab4f8;
+}
+
+ytd-app[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox,
+html[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox,
+[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox {
+  background-color: #8ab4f8;
+  border-color: #8ab4f8;
+}
+
+ytd-app[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after,
+html[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after,
+[dark] .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after {
+  border-color: #202124;
+}
+
+ytd-app[dark] .yt-chat-read-checkbox-input:focus + .yt-chat-read-checkbox,
+html[dark] .yt-chat-read-checkbox-input:focus + .yt-chat-read-checkbox,
+[dark] .yt-chat-read-checkbox-input:focus + .yt-chat-read-checkbox {
+  box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.4);
+}
+
+/* ==========================================================================
+   Read Message Styling
+   ========================================================================== */
+
+/* Apply strikethrough to message text only */
+.yt-chat-read-marked .yt-chat-read-message-text {
+  text-decoration: line-through;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1.5px;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+
+/* Ensure only the message text gets strikethrough, not author name or metadata */
+.yt-chat-read-marked #author-name,
+.yt-chat-read-marked #metadata,
+.yt-chat-read-marked .yt-live-chat-author-chip,
+.yt-chat-read-marked .timestamp,
+.yt-chat-read-marked yt-live-chat-author-badge-renderer {
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* Super Chat / Paid message specific */
+.yt-chat-read-marked yt-live-chat-paid-message-renderer .yt-chat-read-message-text,
+.yt-chat-read-marked yt-live-chat-paid-sticker-renderer .yt-chat-read-message-text {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* Don't apply strikethrough to chip bar (super chat amount) */
+.yt-chat-read-marked #chip-bar,
+.yt-chat-read-marked .chip-bar {
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Layout Adjustments
+   ========================================================================== */
+
+/* Ensure checkbox aligns properly with message content */
+yt-live-chat-text-message-renderer .yt-chat-read-checkbox-container,
+yt-live-chat-paid-message-renderer .yt-chat-read-checkbox-container,
+yt-live-chat-paid-sticker-renderer .yt-chat-read-checkbox-container {
+  margin-top: 2px; /* Fine-tune vertical alignment */
+}
+
+/* Handle YouTube's message content layout */
+#content.yt-chat-read-processed {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Ensure message text wraps properly with checkbox */
+#message.yt-chat-read-message-text {
+  flex: 1;
+  min-width: 0; /* Allow text to shrink */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   Standalone Live Chat Window Support
+   ========================================================================== */
+
+/* Popout chat window */
+.live-chat-popout .yt-chat-read-checkbox-container,
+.yt-live-chat-popout .yt-chat-read-checkbox-container {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.live-chat-popout .yt-chat-read-checkbox,
+.yt-live-chat-popout .yt-chat-read-checkbox {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================================
+   Embedded Chat Support
+   ========================================================================== */
+
+/* Embedded chat iframe */
+.yt-embed-chat .yt-chat-read-checkbox-container,
+.yt-live-chat-embed .yt-chat-read-checkbox-container {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-chat-read-checkbox-container,
+  .yt-chat-read-checkbox,
+  .yt-chat-read-message-text {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   High Contrast Mode Support
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+  .yt-chat-read-checkbox {
+    border-width: 2px;
+  }
+
+  .yt-chat-read-checkbox-input:checked + .yt-chat-read-checkbox::after {
+    border-width: 3px;
+  }
+
+  .yt-chat-read-marked .yt-chat-read-message-text {
+    text-decoration-thickness: 2px;
+    opacity: 0.7;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .yt-chat-read-checkbox-container {
+    display: none;
+  }
+
+  .yt-chat-read-marked .yt-chat-read-message-text {
+    text-decoration: line-through;
+    opacity: 1;
+    color: #666 !important;
+  }
+}
+
+/* ==========================================================================
+   RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .yt-chat-read-checkbox-container {
+  margin-right: 4px;
+  margin-left: 8px;
+}
+
+/* ==========================================================================
+   Animation for new checkbox appearance
+   ========================================================================== */
+
+@keyframes checkbox-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.yt-chat-read-checkbox-container {
+  animation: checkbox-appear 0.15s ease-out;
+}
+
+/* ==========================================================================
+   Debug Helper (remove in production)
+   ========================================================================== */
+
+/*
+.yt-chat-read-checkbox-container {
+  outline: 1px solid red;
+}
+.yt-chat-read-message-text {
+  outline: 1px solid blue;
+}
+*/

@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Live Chat Read Tracker",
+  "version": "1.0.0",
+  "description": "Mark YouTube Live Chat messages as read with a simple checkbox. Messages are crossed out when marked read, with persistent storage across page reloads.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "YouTube Live Chat Read Tracker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://www.youtube.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/live_chat*",
+        "*://www.youtube.com/live_chat*",
+        "*://*.youtube.com/live_chat_replay*",
+        "*://www.youtube.com/live_chat_replay*"
+      ],
+      "js": ["storage.js", "message-manager.js", "content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": ["*://*.youtube.com/*", "*://www.youtube.com/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "minimum_chrome_version": "88"
+}

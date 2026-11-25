@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Extension Icons</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .icon-item {
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .icon-item canvas {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f5f5f5;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover { background: #1557b0; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .download-all {
+      margin-top: 1rem;
+    }
+    .status {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #e8f0fe;
+      border-radius: 4px;
+      display: none;
+    }
+    .status.show { display: block; }
+  </style>
+</head>
+<body>
+  <h1>Generate Extension Icons</h1>
+  <p>Click "Generate Icons" to create PNG files from the SVG source. Then download each or use "Download All" to get a ZIP.</p>
+
+  <button id="generateBtn" onclick="generateIcons()">Generate Icons</button>
+
+  <div class="status" id="status"></div>
+
+  <div class="icon-grid" id="iconGrid"></div>
+
+  <div class="download-all">
+    <button id="downloadAllBtn" onclick="downloadAll()" disabled>Download All as ZIP</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    const sizes = [16, 32, 48, 128];
+    const generatedIcons = {};
+
+    async function generateIcons() {
+      const btn = document.getElementById('generateBtn');
+      const status = document.getElementById('status');
+      const grid = document.getElementById('iconGrid');
+      const downloadBtn = document.getElementById('downloadAllBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      status.classList.remove('show');
+      grid.innerHTML = '';
+
+      try {
+        // Fetch SVG
+        const response = await fetch('icon.svg');
+        const svgText = await response.text();
+
+        for (const size of sizes) {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+
+          // Create image from SVG
+          const img = new Image();
+          const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(svgBlob);
+
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = url;
+          });
+
+          // Draw with high quality
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, size, size);
+
+          URL.revokeObjectURL(url);
+
+          // Convert to PNG blob
+          const pngBlob = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/png');
+          });
+
+          generatedIcons[`icon${size}.png`] = pngBlob;
+
+          // Display
+          const item = document.createElement('div');
+          item.className = 'icon-item';
+          item.innerHTML = `
+            <canvas width="${size}" height="${size}"></canvas>
+            <div style="margin-top: 0.5rem;">${size}x${size}</div>
+            <button onclick="downloadIcon(${size})" style="margin-top: 0.5rem; padding: 0.25rem 0.75rem; font-size: 0.8rem;">Download</button>
+          `;
+          item.querySelector('canvas').getContext('2d').drawImage(img, 0, 0, size, size);
+          grid.appendChild(item);
+        }
+
+        downloadBtn.disabled = false;
+        status.textContent = 'Icons generated successfully!';
+        status.classList.add('show');
+      } catch (error) {
+        status.textContent = 'Error: ' + error.message;
+        status.style.background = '#fce8e6';
+        status.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate Icons';
+      }
+    }
+
+    function downloadIcon(size) {
+      const blob = generatedIcons[`icon${size}.png`];
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `icon${size}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function downloadAll() {
+      const zip = new JSZip();
+      for (const [name, blob] of Object.entries(generatedIcons)) {
+        zip.file(name, blob);
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'extension-icons.zip';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
